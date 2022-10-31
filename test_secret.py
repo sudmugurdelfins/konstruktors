@@ -2,7 +2,6 @@ import os.path
 import mysql.connector
 
 from configparser import ConfigParser
-from mysql.connector import Error
 
 print("----------")
 print("Check if secret map exists")
