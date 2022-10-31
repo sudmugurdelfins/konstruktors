@@ -1,6 +1,8 @@
 import os.path
 import mysql.connector
+
 import tweepy
+import tweepy.errors
 
 from configparser import ConfigParser
 
@@ -53,7 +55,11 @@ auth = tweepy.OAuthHandler(twitter_api_key, twitter_api_secret)
 auth.set_access_token(twitter_access_token, twitter_access_token_secret)
 
 api = tweepy.API(auth)
-user = api.verify_credentials()
-print("The user has " + str(user.followers_count) + " followers.")
+try:
+	user = api.verify_credentials()
+except tweepy.errors.Forbidden:
+	print('Worked!')
+except:
+	print('Failed!')
 print("OK")
 print("----------")
