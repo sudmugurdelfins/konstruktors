@@ -53,10 +53,7 @@ auth = tweepy.OAuthHandler(twitter_api_key, twitter_api_secret)
 auth.set_access_token(twitter_access_token, twitter_access_token_secret)
 
 api = tweepy.API(auth)
-try:
-    api.verify_credentials()
-    print('Connection successful')
-except:
-    print('Connection failed')
+user = api.verify_credentials()
+print("The user has " + str(user.followers_count) + " followers.")
 print("OK")
 print("----------")
