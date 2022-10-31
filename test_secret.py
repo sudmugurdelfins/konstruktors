@@ -1,5 +1,6 @@
 import os.path
 import mysql.connector
+import tweepy
 
 from configparser import ConfigParser
 
@@ -31,5 +32,31 @@ connection = mysql.connector.connect(host=mysql_config_mysql_host, database=mysq
 if connection.is_connected():
             print('Connected to database')
 
+print("OK")
+print("----------")
+print("----------")
+print("Check if twitter data exist")
+assert config.has_option('twitter', 'api_key')  == True
+assert config.has_option('twitter', 'api_secret')  == True
+assert config.has_option('twitter', 'access_token')  == True
+assert config.has_option('twitter', 'access_token_secret')  == True
+print("OK")
+print("----------")
+print("----------")
+print("Check if twitter data is valid")
+twitter_api_key = config.get('twitter', 'api_key')
+twitter_api_secret = config.get('twitter', 'api_secret')
+twitter_access_token = config.get('twitter', 'access_token')
+twitter_access_token_secret = config.get('twitter', 'access_token_secret')
+
+auth = tweepy.OAuthHandler(twitter_api_key, twitter_api_secret)
+auth.set_access_token(twitter_access_token, twitter_access_token_secret)
+
+api = tweepy.API(auth)
+try:
+    api.verify_credentials()
+    print('Connection successful')
+except:
+    print('Connection failed')
 print("OK")
 print("----------")
