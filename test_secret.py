@@ -1,23 +1,38 @@
 import os.path
 import mysql.connector
-
+import yaml
+import logging
+import logging.config
 import tweepy
 import tweepy.errors
 
 from configparser import ConfigParser
 
-print("----------")
-print("Check if secret map exists")
+# Loading logging configuration
+with open('./log_worker.yaml', 'r') as stream:
+   log_config = yaml.safe_load(stream)
+
+logging.config.dictConfig(log_config)
+# Creating logger
+logger = logging.getLogger('root')
+logger.info('Asteroid processing service')
+
+# Initiating and reading config values
+logger.info('Loading configuration from file')
+
+
+logger.info("----------")
+logger.info("Check if secret map exists")
 assert os.path.isdir("/home/s138/my_secret_files/") == True
-print("OK")
-print("----------")
-print("----------")
-print("Check if secret file exists")
+logger.info("OK")
+logger.info("----------")
+logger.info("----------")
+logger.info("Check if secret file exists")
 assert os.path.isfile("/home/s138/my_secret_files/config.ini") == True
-print("OK")
-print("----------")
-print("----------")
-print("Check if possible to connect to database")
+logger.info("OK")
+logger.info("----------")
+logger.info("----------")
+logger.info("Check if possible to connect to database")
 try:
 	config = ConfigParser()
 	config.read('/home/s138/my_secret_files/config.ini')
@@ -28,24 +43,24 @@ try:
 	mysql_config_mysql_pass = config.get('mysql_config', 'mysql_pass')
 
 except:
-	print("")
+	logger.exception("")
 
 connection = mysql.connector.connect(host=mysql_config_mysql_host, database=mysql_config_mysql_db, user=mysql_config_mysql_user, password=mysql_config_mysql_pass)
 if connection.is_connected():
-            print('Connected to database')
+            logger.info('Connected to database')
 
-print("OK")
-print("----------")
-print("----------")
-print("Check if twitter data exist")
+logger.info("OK")
+logger.info("----------")
+logger.info("----------")
+logger.info("Check if twitter data exist")
 assert config.has_option('twitter', 'api_key')  == True
 assert config.has_option('twitter', 'api_secret')  == True
 assert config.has_option('twitter', 'access_token')  == True
 assert config.has_option('twitter', 'access_token_secret')  == True
-print("OK")
-print("----------")
-print("----------")
-print("Check if twitter data is valid")
+logger.info("OK")
+logger.info("----------")
+logger.info("----------")
+logger.info("Check if twitter data is valid")
 twitter_api_key = config.get('twitter', 'api_key')
 twitter_api_secret = config.get('twitter', 'api_secret')
 twitter_access_token = config.get('twitter', 'access_token')
@@ -58,8 +73,8 @@ api = tweepy.API(auth)
 try:
 	user = api.verify_credentials()
 except tweepy.errors.Forbidden:
-	print('Worked!')
+	logger.info('Twitter is connected!')
 except:
-	print('Failed!')
-print("OK")
-print("----------")
+	logger.error('Twitter didnt connect!')
+logger.info("OK")
+logger.info("----------")
